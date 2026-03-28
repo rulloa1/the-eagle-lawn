@@ -1,0 +1,40 @@
+ary")} {
+					background: #1a1a19;
+					color: #fff;
+					flex: 1;
+				}
+
+				.${We("dialog-content")} {
+					color: var(--text-tertiary);
+					font-size: 16px;
+					font-style: normal;
+					font-weight: 400;
+					line-height: 24px;
+					margin: 0;
+				}
+
+				.${We("dialog-content")} + p {
+					margin-top: 12px;
+				}
+
+				.${We("dialog-content")} a {
+					color: var(--text-secondary);
+					text-decoration: underline;
+				}
+			</style>
+
+			<lit-dialog ${Tt(e=>this.handleSetDialogRef(e))} title="Made with Manus" width="358px">
+				<p class=${We("dialog-content")}>
+					AI-generated (possibly user-edited) content - please verify carefully and submit no personal information.
+				</p>
+				<p class=${We("dialog-content")}>
+					If you believe this content violates your rights or applicable laws,
+					<a target="_blank" href="${ce.host}/report?resourceType=3&shareUrl=${encodeURIComponent(window.location.href)}"
+						>you may submit a report for review.</a
+					>
+				</p>
+				<div slot="footer" class=${We("dialog-footer")}>
+					<button class=${We("dialog-button")} @click=${()=>{var e;return(e=this.dialogRef)==null?void 0:e.close()}}>Cancel</button>
+					<button
+						class=${$e({[We("dialog-button")]:!0,[We("dialog-button-primary")]:!0})}
+						@click=${()=>this.handleCreateMyWebsite(
