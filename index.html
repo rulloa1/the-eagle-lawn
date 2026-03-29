@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Eagle Lawn Services — Precision in Every Blade</title>
+  <meta name="description" content="The Eagle Lawn Services delivers commercial-grade landscaping and turf management with unmatched precision, reliability, and a pristine finish every time." />
+  <meta name="theme-color" content="#ffffff" />
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            grass: {
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- GSAP + ScrollTrigger CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* =========================================
+       BASE & RESET
+    ========================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: auto; /* GSAP manages smooth scrolling */
+      overscroll-behavior: none;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #ffffff;
+      color: #111827;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* =========================================
+       CANVAS — Fixed Full-Bleed Background
+    ========================================= */
+    #hero-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      display: block;
+    }
+
+    /* =========================================
+       SCROLL CONTAINER
+       The pinned section drives GSAP animation.
+       400vh = 4x viewport scroll distance
+    ========================================= */
+    #canvas-section {
+      position: relative;
+      height: 400vh;
+      z-index: 1;
+    }
+
+    /* =========================================
+       OVERLAY WRAPPER — sticky, sits above canvas
+    ========================================= */
+    #overlay-wrapper {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+    /* =========================================
+       GLASSMORPHISM TEXT PANELS
+       Light-mode: white translucent + whisper border
+    ========================================= */
+    .text-panel {
+      position: absolute;
+      pointer-events: auto;
+      opacity: 0;
+      transform: translateY(32px);
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(18px) saturate(160%);
+      -webkit-backdrop-filter: blur(18px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 20px;
+      padding: 2.5rem 3rem;
+      max-width: 680px;
+      box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.06),
+        0 1px 4px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    /* Section 1 — Center Hero */
+    #panel-hero {
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) translateY(32px);
+      min-width: 520px;
+    }
+
+    /* Section 2 — Left Aligned */
+    #panel-detail {
+      text-align: left;
+      left: 6vw;
+      top: 50%;
+      transform: translateY(calc(-50% + 32px));
+      max-width: 520px;
+    }
+
+    /* Section 3 — Right Aligned */
+    #panel-reliable {
+      text-align: right;
+      right: 6vw;
+      top: 50%;
+      transform: translateY(calc(-50% + 32px));
+      max-width: 520px;
+    }
+
+    /* Section 4 — Center CTA */
+    #panel-cta {
+      text-align: center;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) translateY(32px);
+      min-width: 480px;
+    }
+
+    /* Typography inside panels */
+    .panel-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #16a34a;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .panel-headline {
+      font-size: clamp(2rem, 4.5vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+      color: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    .panel-subtext {
+      font-size: 1.0625rem;
+      font-weight: 400;
+      line-height: 1.7;
+      color: #475569;
+      max-width: 42ch;
+    }
+
+    /* Section 1 specific: larger headline */
+    #panel-hero .panel-headline {
+      font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+    }
+
+    /* Divider line accent */
+    .panel-divider {
+      width: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+      border-radius: 999px;
+      margin: 1.25rem 0;
+    }
+
+    #panel-hero .panel-divider,
+    #panel-cta .panel-divider {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #panel-reliable .panel-divider {
+      margin-left: auto;
+    }
+
+    /* CTA Button */
+    #cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.75rem;
+      padding: 0.9rem 2.25rem;
+      background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+      color: #ffffff;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      pointer-events: auto;
+      transition:
+        transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+      box-shadow:
+        0 4px 20px rgba(22, 163, 74, 0.35),
+        0 1px 4px rgba(22, 163, 74, 0.2);
+    }
+
+    #cta-button:hover {
+      transform: translateY(-2px) scale(1.035);
+      box-shadow:
+        0 8px 32px rgba(22, 163, 74, 0.45),
+        0 2px 8px rgba(22, 163, 74, 0.25);
+    }
+
+    #cta-button:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    /* Arrow icon inside button */
+    #cta-button svg {
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    #cta-button:hover svg {
+      transform: translateX(3px);
+    }
+
+    /* =========================================
+       NAV BAR — Fixed, Ultra-minimal
+    ========================================= */
+    #navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 1.25rem 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    #navbar.scrolled {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-logo-text {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-cta {
+      padding: 0.55rem 1.4rem;
+      background: #16a34a;
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-cta:hover {
+      background: #15803d;
+      transform: translateY(-1px);
+    }
+
+    /* =========================================
+       PROGRESS BAR — Scroll indicator
+    ========================================= */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      width: 0%;
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+      z-index: 200;
+      transition: width 0.05s linear;
+      pointer-events: none;
+    }
+
+    /* =========================================
+       AFTER-SCROLL SECTIONS (below the pinned area)
+    ========================================= */
+    #post-scroll {
+      position: relative;
+      z-index: 10;
+      background: #ffffff;
+    }
+
+    /* Services grid */
+    .service-card {
+      background: #f9fafb;
+      border: 1px solid #f1f5f9;
+      border-radius: 16px;
+      padding: 2rem;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.07);
+    }
+
+    .service-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Stat counter card */
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .stat-number {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #0f172a;
+      line-height: 1;
+    }
+
+    .stat-suffix {
+      color: #16a34a;
+    }
+
+    /* Testimonial */
+    .testimonial-card {
+      background: #f9fafb;
+      border-radius: 16px;
+      padding: 2rem;
+      border: 1px solid #f1f5f9;
+    }
+
+    /* Footer */
+    #footer {
+      background: #0f172a;
+      color: #94a3b8;
+    }
+
+    /* =========================================
+       PRELOADER
+    ========================================= */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      transition: opacity 0.6s ease;
+    }
+
+    #preloader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .preloader-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .preloader-bar-track {
+      width: 180px;
+      height: 2px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .preloader-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #16a34a, #4ade80);
+      border-radius: 999px;
+      transition: width 0.15s linear;
+    }
+
+    .preloader-text {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* =========================================
+       CANVAS GRADIENT OVERLAY
+       Soft vignette to improve text legibility
+    ========================================= */
+    #canvas-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at center, transparent 30%, rgba(255,255,255,0.18) 100%);
+    }
+
+    /* =========================================
+       RESPONSIVE ADJUSTMENTS
+    ========================================= */
+    @media (max-width: 768px) {
+      .text-panel { padding: 1.75rem 1.5rem; }
+      #panel-hero, #panel-cta { min-width: calc(100vw - 3rem); left: 1.5rem; transform: translateY(32px); }
+      #panel-detail { left: 1.5rem; right: 1.5rem; max-width: unset; }
+      #panel-reliable { right: 1.5rem; left: 1.5rem; max-width: unset; text-align: left; }
+      #panel-reliable .panel-divider { margin-left: 0; }
+    }
+
+    /* =========================================
+       SCROLL-IN ANIMATION for post-scroll sections
+    ========================================= */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-white text-gray-900 antialiased">
+
+  <!-- =====================================================
+       PRELOADER
+  ====================================================== -->
+  <div id="preloader" role="status" aria-label="Loading">
+    <div class="nav-logo-mark" style="width:44px;height:44px;border-radius:12px;">
+      <!-- Eagle feather icon -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l7 4.5-7 4.5z" fill="white"/>
+      </svg>
+    </div>
+    <p class="preloader-logo">The Eagle Lawn Services</p>
+    <div class="preloader-bar-track">
+      <div class="preloader-bar-fill" id="preloader-fill"></div>
+    </div>
+    <p class="preloader-text">Loading experience…</p>
+  </div>
+
+  <!-- =====================================================
+       SCROLL PROGRESS BAR
+  ====================================================== -->
+  <div id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- =====================================================
+       CANVAS VIGNETTE OVERLAY
+  ====================================================== -->
+  <div id="canvas-vignette" aria-hidden="true"></div>
+
+  <!-- =====================================================
+       CANVAS — Fixed, full-bleed, z-index: 0
+       This is the animated image-sequence background.
+  ====================================================== -->
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+
+  <!-- =====================================================
+       NAV BAR
+  ====================================================== -->
+  <header id="navbar" role="banner">
+    <a href="#" class="nav-logo" aria-label="The Eagle Lawn Services home">
+      <div class="nav-logo-mark">
+        <!-- Stylized "E" leaf icon -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-13 7 0 0 2-6 9.5-8.5L17 8z" fill="white"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">The Eagle Lawn</span>
+    </a>
+    <nav aria-label="Primary">
+      <a href="#contact" class="nav-cta" id="nav-quote-btn">Get a Quote</a>
+    </nav>
+  </header>
+
+  <!-- =====================================================
+       CANVAS SECTION — GSAP Pinned (400vh)
+       All scroll-linked animation is driven here.
+  ====================================================== -->
+  <main id="canvas-section" role="main">
+
+    <!-- Sticky overlay wrapper: stays visible during the 400vh scroll -->
+    <div id="overlay-wrapper" aria-live="polite">
+
+      <!-- PANEL 1: Hero (0% scroll) -->
+      <article id="panel-hero" class="text-panel" aria-label="Hero">
+        <span class="panel-eyebrow">Est. 2018 · Licensed & Insured</span>
+        <h1 class="panel-headline">The Eagle Lawn<br/>Services.</h1>
+        <div class="panel-divider" aria-hidden="true"></div>
+        <p class="panel-subtext">Precision in every blade.</p>
+      </article>
+
+      <!-- PANEL 2: Unmatched Detail (33% scroll) -->
+      <article id="panel-detail" class="text-panel" aria-label="Unmatched Detail">
+        <span class="panel-eyebrow">What we do</span>
+        <h2 class="panel-headline">Unmatched<br/>Detail.</h2>
+        <div class="panel-divider" aria-hidden="true"></div>
+        <p class="panel-subtext">Commercial-grade landscaping and turf management, executed with exact precision. Every edge, every stripe, every time.</p>
+      </article>
+
+      <!-- PANEL 3: Reliable & Clean (66% scroll) -->
+      <article id="panel-reliable" class="text-panel" aria-label="Reliable and Clean">
+        <span class="panel-eyebrow">Our promise</span>
+        <h2 class="panel-headline">Reliable<br/>& Clean.</h2>
+        <div class="panel-divider" aria-hidden="true"></div>
+        <p class="panel-subtext" style="margin-left:auto;">We show up on time and leave nothing behind but the perfect stripe. Guaranteed.</p>
+      </article>
+
+      <!-- PANEL 4: CTA (90% scroll) -->
+      <article id="panel-cta" class="text-panel" aria-label="Get a free quote">
+        <span class="panel-eyebrow">Ready to get started?</span>
+        <h2 class="panel-headline">Reclaim Your<br/>Weekend.</h2>
+        <div class="panel-divider" aria-hidden="true"></div>
+        <p class="panel-subtext" style="margin:0 auto;">
+          Let us handle the turf while you enjoy the result. Free estimate, no commitment.
+        </p>
+        <a href="#contact" id="cta-button" aria-label="Get a free quote from The Eagle Lawn Services">
+          Get a Free Quote
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </article>
+
+    </div><!-- /overlay-wrapper -->
+
+  </main><!-- /canvas-section -->
+
+  <!-- =====================================================
+       POST-SCROLL SECTIONS
+       Rendered below the pin, on a white background.
+  ====================================================== -->
+  <div id="post-scroll">
+
+    <!-- ── SERVICES SECTION ── -->
+    <section id="services" class="py-32 px-6" aria-labelledby="services-heading">
+      <div class="max-w-6xl mx-auto">
+
+        <div class="reveal-on-scroll mb-16 text-center">
+          <span class="panel-eyebrow" style="display:inline-block;margin-bottom:0.5rem;">What we offer</span>
+          <h2 class="panel-headline" style="font-size:clamp(1.8rem,3.5vw,2.8rem);">
+            Full-Service Lawn Care,<br/>Done Right.
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 stagger-reveal">
+
+          <div class="service-card reveal-on-scroll">
+            <div class="service-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-13 7 0 0 2-6 9.5-8.5L17 8z"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-700 text-gray-900 mb-2" style="font-weight:700;">Precision Mowing</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">Striped, edged, and blown clean every visit. We cut at the ideal height for your grass species to promote a healthy, dense turf.</p>
+          </div>
+
+          <div class="service-card reveal-on-scroll">
+            <div class="service-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 22V12M12 12C12 7 17 3 22 3M12 12C12 7 7 3 2 3"/>
+                <path d="M5 21s1-4 7-4 7 4 7 4"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-700 text-gray-900 mb-2" style="font-weight:700;">Fertilization & Weed Control</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">Seasonal treatment programs that eliminate weeds and feed your lawn with the right nutrients at the right time.</p>
+          </div>
+
+          <div class="service-card reveal-on-scroll">
+            <div class="service-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-700 text-gray-900 mb-2" style="font-weight:700;">Irrigation & Sprinkler</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">Smart system installation, maintenance, and seasonal adjustments to maximize efficiency and keep your lawn green with minimal water waste.</p>
+          </div>
+
+          <div class="service-card reveal-on-scroll">
+            <div class="service-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <path d="M9 9h6M9 12h6M9 15h4"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-700 text-gray-900 mb-2" style="font-weight:700;">Lawn Restoration</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">Aeration, overseeding, and dethatching services that bring tired, thin lawns back to a thick, lush, healthy state.</p>
+          </div>
+
+          <div class="service-card reveal-on-scroll">
+            <div class="service-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path d="M9 22V12h6v10"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-700 text-gray-900 mb-2" style="font-weight:700;">Commercial Properties</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">HOAs, office parks, and multi-tenant properties served on consistent schedules with no surprises — and always to spec.</p>
+          </div>
+
+          <div class="service-card reveal-on-scroll">
+            <div class="service-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-700 text-gray-900 mb-2" style="font-weight:700;">Seasonal Clean-Up</h3>
+            <p class="text-slate-500 leading-relaxed text-sm">Spring and fall clean-ups, leaf removal, bed preparation, and debris hauling to keep your property pristine year-round.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STATS BAND ── -->
+    <section class="py-20 border-t border-b border-gray-100" aria-label="Company stats">
+      <div class="max-w-5xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 reveal-on-scroll">
+
+          <div class="stat-item">
+            <div class="stat-number"><span class="stat-counter" data-target="500">0</span><span class="stat-suffix">+</span></div>
+            <div class="text-sm text-slate-500 mt-2 font-medium">Happy Clients</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-number"><span class="stat-counter" data-target="8">0</span><span class="stat-suffix">yr</span></div>
+            <div class="text-sm text-slate-500 mt-2 font-medium">In Business</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-number"><span class="stat-counter" data-target="98">0</span><span class="stat-suffix">%</span></div>
+            <div class="text-sm text-slate-500 mt-2 font-medium">On-Time Rate</div>
+          </div>
+
+          <div class="stat-item">
+            <div class="stat-number"><span class="stat-counter" data-target="5">0</span><span class="stat-suffix">★</span></div>
+            <div class="text-sm text-slate-500 mt-2 font-medium">Avg. Rating</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TESTIMONIALS ── -->
+    <section class="py-32 px-6" aria-labelledby="testimonials-heading">
+      <div class="max-w-6xl mx-auto">
+
+        <div class="reveal-on-scroll mb-16 text-center">
+          <span class="panel-eyebrow" style="display:inline-block;margin-bottom:0.5rem;">What clients say</span>
+          <h2 id="testimonials-heading" class="panel-headline" style="font-size:clamp(1.8rem,3.5vw,2.8rem);">
+            Real Results,<br/>Real Neighbors.
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <blockquote class="testimonial-card reveal-on-scroll">
+            <div class="flex gap-1 mb-4" aria-label="5 stars">
+              <span aria-hidden="true" style="color:#16a34a;font-size:1.1rem;">★★★★★</span>
+            </div>
+            <p class="text-slate-700 leading-relaxed text-sm mb-4">"Eagle Lawn transformed our overgrown backyard into something from a magazine. The striping is immaculate every single week."</p>
+            <footer class="text-xs text-slate-400 font-semibold tracking-wide uppercase">— Marcus T., Houston TX</footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card reveal-on-scroll">
+            <div class="flex gap-1 mb-4" aria-label="5 stars">
+              <span aria-hidden="true" style="color:#16a34a;font-size:1.1rem;">★★★★★</span>
+            </div>
+            <p class="text-slate-700 leading-relaxed text-sm mb-4">"We manage a 40-unit complex. Eagle is the only crew we've worked with that's never missed a scheduled visit. Absolute pros."</p>
+            <footer class="text-xs text-slate-400 font-semibold tracking-wide uppercase">— Rivera Property Mgmt.</footer>
+          </blockquote>
+
+          <blockquote class="testimonial-card reveal-on-scroll">
+            <div class="flex gap-1 mb-4" aria-label="5 stars">
+              <span aria-hidden="true" style="color:#16a34a;font-size:1.1rem;">★★★★★</span>
+            </div>
+            <p class="text-slate-700 leading-relaxed text-sm mb-4">"I used to spend my whole Saturday on lawn work. Now I actually get weekends back. The quote was fair and the work is beyond what I expected."</p>
+            <footer class="text-xs text-slate-400 font-semibold tracking-wide uppercase">— Jennifer K., Katy TX</footer>
+          </blockquote>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTACT / CTA SECTION ── -->
+    <section id="contact" class="py-32 px-6 bg-gray-50" aria-labelledby="contact-heading">
+      <div class="max-w-xl mx-auto text-center reveal-on-scroll">
+        <span class="panel-eyebrow" style="display:inline-block;margin-bottom:0.5rem;">Free, no-obligation estimate</span>
+        <h2 id="contact-heading" class="panel-headline" style="font-size:clamp(1.8rem,3.5vw,2.8rem);margin-bottom:1rem;">
+          Let's Talk About<br/>Your Lawn.
+        </h2>
+        <p class="text-slate-500 leading-relaxed mb-10">
+          Fill in the form below and we'll get back to you within one business day with a free, detailed quote.
+        </p>
+
+        <form id="quote-form" novalidate class="text-left space-y-4" aria-label="Free quote request form">
+
+          <div>
+            <label for="name" class="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1.5">Full Name</label>
+            <input type="text" id="name" name="name" required autocomplete="name"
+              class="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-grass-500 focus:border-transparent transition"
+              placeholder="Jane Smith" />
+          </div>
+
+          <div>
+            <label for="email" class="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1.5">Email Address</label>
+            <input type="email" id="email" name="email" required autocomplete="email"
+              class="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-grass-500 focus:border-transparent transition"
+              placeholder="jane@example.com" />
+          </div>
+
+          <div>
+            <label for="phone" class="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1.5">Phone Number</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel"
+              class="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-grass-500 focus:border-transparent transition"
+              placeholder="(555) 000-0000" />
+          </div>
+
+          <div>
+            <label for="service" class="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1.5">Service Needed</label>
+            <select id="service" name="service"
+              class="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-grass-500 focus:border-transparent transition appearance-none cursor-pointer">
+              <option value="">Select a service…</option>
+              <option value="mowing">Precision Mowing</option>
+              <option value="fertilization">Fertilization & Weed Control</option>
+              <option value="irrigation">Irrigation & Sprinkler</option>
+              <option value="restoration">Lawn Restoration</option>
+              <option value="commercial">Commercial Property</option>
+              <option value="cleanup">Seasonal Clean-Up</option>
+              <option value="other">Other / Not Sure</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="message" class="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1.5">Tell Us More <span class="text-slate-300 font-normal">(optional)</span></label>
+            <textarea id="message" name="message" rows="4"
+              class="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-grass-500 focus:border-transparent transition resize-none"
+              placeholder="Property size, any specific concerns, or a good time to call…"></textarea>
+          </div>
+
+          <button type="submit" id="submit-btn"
+            class="w-full py-4 rounded-xl text-white font-semibold text-sm tracking-wide transition-all duration-200"
+            style="background:linear-gradient(135deg,#16a34a,#15803d);box-shadow:0 4px 20px rgba(22,163,74,0.3);">
+            Send My Free Quote Request →
+          </button>
+
+          <p class="text-center text-xs text-slate-400 mt-3">
+            We respect your privacy. No spam, ever.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer id="footer" class="py-16 px-6" role="contentinfo">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <div class="nav-logo-mark">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 008 20C19 20 22 3 22 3c-1 2-8 2-13 7 0 0 2-6 9.5-8.5L17 8z" fill="white"/>
+                </svg>
+              </div>
+              <span style="color:#f1f5f9;font-weight:700;font-size:0.9375rem;letter-spacing:-0.02em;">The Eagle Lawn Services</span>
+            </div>
+            <p class="text-sm" style="max-width:30ch;line-height:1.6;">Precision landscaping and turf management. Licensed, insured, and committed to excellence.</p>
+          </div>
+
+          <div class="flex flex-col gap-2 text-sm">
+            <a href="tel:+15550001234" class="hover:text-white transition-colors" style="color:#94a3b8;">(555) 000-1234</a>
+            <a href="mailto:hello@eaglelawn.com" class="hover:text-white transition-colors" style="color:#94a3b8;">hello@eaglelawn.com</a>
+            <span style="color:#94a3b8;">Houston, TX & surrounding areas</span>
+          </div>
+
+        </div>
+
+        <div class="mt-12 pt-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs" style="border-top:1px solid rgba(255,255,255,0.06);color:#64748b;">
+          <p>&copy; 2025 The Eagle Lawn Services. All rights reserved.</p>
+          <p>Built with precision. Just like our lawn care.</p>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /post-scroll -->
+
+
+  <!-- =====================================================
+       JAVASCRIPT — GSAP + ScrollTrigger Animation Engine
+  ====================================================== -->
+  <script>
+    /* ====================================================
+       CONFIGURATION
+       ─────────────────────────────────────────────────
+       Replace PLACEHOLDER_FRAMES with your actual image
+       paths when you add the 200 JPG drone footage frames.
+
+       Expected format: './frames/frame_0001.jpg' etc.
+       Total frames: 200
+    ==================================================== */
+
+    // ── Placeholder image array ──────────────────────────
+    // These generate vivid, scroll-reactive placeholder
+    // frames using CSS hue rotation on a canvas gradient.
+    // Once you have the real 200 JPGs, swap this for:
+    //
+    //   const FRAME_COUNT = 200;
+    //   const FRAMES = Array.from({ length: FRAME_COUNT },
+    //     (_, i) => `./frames/frame_${String(i+1).padStart(4,'0')}.jpg`
+    //   );
+    //
+    const FRAME_COUNT = 60; // placeholder frame count
+
+    // Generate placeholder frames as canvas-drawn gradient stills
+    // Each "frame" is a dataURL for a unique green-tone gradient slice
+    function buildPlaceholderFrames(count) {
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width  = 1920;
+      offCanvas.height = 1080;
+      const ctx = offCanvas.getContext('2d');
+      const frames = [];
+
+      for (let i = 0; i < count; i++) {
+        const progress = i / (count - 1);
+
+        // Simulate a drone sweep: hue shifts from warm amber morning
+        // light → lush mid-day greens → cooler afternoon shadow tone
+        const hue     = 80 + progress * 60;         // 80° olive → 140° vivid green
+        const lightL  = 38 - progress * 10;         // slightly darkens as the sweep goes deeper
+        const skyH    = 200 + progress * 30;
+
+        // Sky gradient (top third)
+        const skyGrad = ctx.createLinearGradient(0, 0, 0, 360);
+        skyGrad.addColorStop(0, `hsl(${skyH}, 55%, 82%)`);
+        skyGrad.addColorStop(1, `hsl(${skyH + 10}, 40%, 95%)`);
+        ctx.fillStyle = skyGrad;
+        ctx.fillRect(0, 0, 1920, 360);
+
+        // Lawn gradient (bottom two-thirds)
+        const lawnGrad = ctx.createLinearGradient(0, 360, 0, 1080);
+        lawnGrad.addColorStop(0,   `hsl(${hue}, 70%, ${lightL + 12}%)`);
+        lawnGrad.addColorStop(0.5, `hsl(${hue + 5}, 80%, ${lightL}%)`);
+        lawnGrad.addColorStop(1,   `hsl(${hue - 5}, 65%, ${lightL - 6}%)`);
+        ctx.fillStyle = lawnGrad;
+        ctx.fillRect(0, 360, 1920, 720);
+
+        // Lawn stripes — hallmark of professional mowing
+        const stripeW = 48;
+        for (let x = 0; x < 1920; x += stripeW) {
+          const isLight = Math.floor(x / stripeW) % 2 === 0;
+          ctx.fillStyle = isLight
+            ? `hsla(${hue}, 75%, ${lightL + 4}%, 0.55)`
+            : `hsla(${hue}, 60%, ${lightL - 4}%, 0.55)`;
+          ctx.fillRect(x, 360, stripeW, 720);
+        }
+
+        // Horizon depth haze
+        const hazeGrad = ctx.createLinearGradient(0, 340, 0, 500);
+        hazeGrad.addColorStop(0,   `hsla(${skyH}, 40%, 90%, 0.7)`);
+        hazeGrad.addColorStop(1,   `hsla(${skyH}, 40%, 90%, 0)`);
+        ctx.fillStyle = hazeGrad;
+        ctx.fillRect(0, 340, 1920, 160);
+
+        frames.push(offCanvas.toDataURL('image/jpeg', 0.82));
+      }
+      return frames;
+    }
+
+    // ── Runtime state ────────────────────────────────────
+    let FRAMES          = [];
+    let isRealFrames    = false; // set true when real JPGs are loaded
+    let currentFrameIdx = 0;
+    let isLoaded        = false;
+
+    /* ====================================================
+       CANVAS SETUP — High-DPI aware
+    ==================================================== */
+    const canvas  = document.getElementById('hero-canvas');
+    const ctx     = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width  = window.innerWidth  * dpr;
+      canvas.height = window.innerHeight * dpr;
+      ctx.scale(dpr, dpr);
+
+      // CSS dimensions stay at logical pixels
+      canvas.style.width  = window.innerWidth  + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+
+      // Re-draw current frame after resize
+      drawFrame(currentFrameIdx);
+    }
+
+    /* ====================================================
+       FRAME RENDERING
+       Draws a frame onto the canvas with object-cover
+       crop logic (matches CSS object-fit: cover behavior).
+    ==================================================== */
+    /** @param {HTMLImageElement} imgEl */
+    function renderImageCover(imgEl) {
+      const dpr     = window.devicePixelRatio || 1;
+      const cw      = window.innerWidth;
+      const ch      = window.innerHeight;
+      const iw      = imgEl.naturalWidth  || imgEl.width;
+      const ih      = imgEl.naturalHeight || imgEl.height;
+
+      const canvasAR = cw / ch;
+      const imgAR    = iw / ih;
+
+      let sx, sy, sw, sh;
+
+      if (imgAR > canvasAR) {
+        // Image is wider than canvas — crop sides
+        sh = ih;
+        sw = ih * canvasAR;
+        sx = (iw - sw) / 2;
+        sy = 0;
+      } else {
+        // Image is taller than canvas — crop top/bottom
+        sw = iw;
+        sh = iw / canvasAR;
+        sx = 0;
+        sy = (ih - sh) / 2;
+      }
+
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.drawImage(imgEl, sx, sy, sw, sh, 0, 0, cw, ch);
+    }
+
+    /* Cached Image elements for real JPEG frames */
+    const imageCache = {};
+
+    function drawFrame(index) {
+      const clampedIndex = Math.min(Math.max(Math.round(index), 0), FRAMES.length - 1);
+
+      if (isRealFrames) {
+        // Real JPEG mode: use cached Image objects
+        const src = FRAMES[clampedIndex];
+        if (imageCache[src]) {
+          renderImageCover(imageCache[src]);
+        }
+      } else {
+        // Placeholder mode: FRAMES are dataURLs
+        const src = FRAMES[clampedIndex];
+        if (!imageCache[src]) {
+          const img      = new Image();
+          img.src        = src;
+          imageCache[src] = img;
+        }
+        const img = imageCache[src];
+        if (img.complete) {
+          renderImageCover(img);
+        } else {
+          img.onload = () => renderImageCover(img);
+        }
+      }
+    }
+
+    /* ====================================================
+       PRELOADER — Build placeholder frames + load assets
+    ==================================================== */
+    const preloaderFill = document.getElementById('preloader-fill');
+    const preloaderEl   = document.getElementById('preloader');
+
+    function runPreloader() {
+      // Step 1 — Build placeholder frames (CPU-bound, do async-ish)
+      setTimeout(() => {
+        preloaderFill.style.width = '20%';
+
+        // Build all placeholder frames synchronously
+        FRAMES = buildPlaceholderFrames(FRAME_COUNT);
+        preloaderFill.style.width = '75%';
+
+        // Optionally: if you add real frames, preload them here.
+        // Example:
+        //   FRAMES = Array.from({length:200},(_,i)=>`./frames/frame_${String(i+1).padStart(4,'0')}.jpg`);
+        //   isRealFrames = true;
+        //   preloadRealFrames(FRAMES, (p)=>{ preloaderFill.style.width = (20+p*55)+'%'; }, onComplete);
+
+        preloaderFill.style.width = '100%';
+
+        setTimeout(() => {
+          isLoaded = true;
+          preloaderEl.classList.add('hidden');
+          drawFrame(0);
+          resizeCanvas();
+          initGSAP();
+        }, 400);
+      }, 120);
+    }
+
+    /**
+     * Preload real JPEG frames (use when swapping to real footage).
+     * @param {string[]} srcs - Array of image paths
+     * @param {function} onProgress - Called with 0..1 progress value
+     * @param {function} onComplete - Called when all images are loaded
+     */
+    function preloadRealFrames(srcs, onProgress, onComplete) {
+      let loaded = 0;
+      srcs.forEach(src => {
+        const img = new Image();
+        img.onload = img.onerror = () => {
+          imageCache[src] = img;
+          loaded++;
+          onProgress(loaded / srcs.length);
+          if (loaded === srcs.length) onComplete();
+        };
+        img.src = src;
+      });
+    }
+
+    /* ====================================================
+       GSAP SCROLL ANIMATION ENGINE
+       ─────────────────────────────────────────────────
+       Architecture:
+         1. Register ScrollTrigger plugin.
+         2. Create ONE master ScrollTrigger that pins
+            #canvas-section for 400vh.
+         3. Drive frame index via tween object { frame: 0 }.
+         4. Use nested ScrollTrigger checkpoints
+            (relative progress values) to animate text panels.
+    ==================================================== */
+    function initGSAP() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // ── Master frame counter object ──────────────────
+      const frameObj = { frame: 0 };
+
+      // ── A. Scroll-scrubbed canvas animation ─────────
+      // Pins #canvas-section in place.
+      // scrub: 1 → extremely smooth, dampened scroll feel.
+      gsap.to(frameObj, {
+        frame: FRAMES.length - 1,
+        ease: 'none',    // linear mapping = 1:1 scroll-to-frame
+        scrollTrigger: {
+          id: 'canvas-pin',
+          trigger: '#canvas-section',
+          start: 'top top',
+          end: 'bottom bottom',
+          pin: false,         // we pin the canvas via CSS (position: fixed)
+          scrub: 1,           // 1 second of "inertia" → luxuriously smooth
+          onUpdate: (self) => {
+            // Update frame
+            const newIdx = Math.round(self.progress * (FRAMES.length - 1));
+            if (newIdx !== currentFrameIdx) {
+              currentFrameIdx = newIdx;
+              drawFrame(currentFrameIdx);
+            }
+
+            // Update the thin progress bar at top of page
+            document.getElementById('scroll-progress').style.width =
+              (self.progress * 100) + '%';
+          },
+        },
+        onUpdate: () => drawFrame(Math.round(frameObj.frame)),
+      });
+
+      // ── B. Text panel entrance / exit animations ─────
+      // Each panel fades & slides up at its scroll checkpoint,
+      // then fades out before the next panel arrives.
+      // Progress thresholds: 0%, 33%, 66%, 90%
+
+      const panels = [
+        { el: '#panel-hero',     enterAt: 0.00, leaveAt: 0.28 },
+        { el: '#panel-detail',   enterAt: 0.30, leaveAt: 0.58 },
+        { el: '#panel-reliable', enterAt: 0.60, leaveAt: 0.85 },
+        { el: '#panel-cta',      enterAt: 0.87, leaveAt: 1.00 },
+      ];
+
+      panels.forEach(({ el, enterAt, leaveAt }) => {
+        const panelEl = document.querySelector(el);
+
+        // We animate a proxy value; GSAP updates opacity/y
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: '#canvas-section',
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 1,
+            onUpdate: (self) => {
+              const p = self.progress;
+
+              // Fade IN band
+              if (p >= enterAt && p < leaveAt) {
+                const inProgress = Math.min((p - enterAt) / 0.06, 1);
+                // Map 0→1 through ease
+                const easedIn = easeOutCubic(inProgress);
+                panelEl.style.opacity = easedIn;
+                panelEl.style.transform = getPanelTransform(el, 32 * (1 - easedIn));
+              }
+              // Fade OUT band
+              else if (p >= leaveAt) {
+                const outProgress = Math.min((p - leaveAt) / 0.06, 1);
+                const easedOut    = easeInCubic(outProgress);
+                panelEl.style.opacity = 1 - easedOut;
+                panelEl.style.transform = getPanelTransform(el, -24 * easedOut);
+              }
+              // Not yet visible
+              else {
+                panelEl.style.opacity = 0;
+                panelEl.style.transform = getPanelTransform(el, 32);
+              }
+            },
+          }
+        });
+      });
+
+      // ── C. Navbar scroll effect ──────────────────────
+      ScrollTrigger.create({
+        start: 80,
+        onEnter:      () => document.getElementById('navbar').classList.add('scrolled'),
+        onLeaveBack:  () => document.getElementById('navbar').classList.remove('scrolled'),
+      });
+
+      // ── D. Post-scroll reveal animations ────────────
+      document.querySelectorAll('.reveal-on-scroll').forEach((el, i) => {
+        gsap.fromTo(el,
+          { opacity: 0, y: 28 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            delay: i * 0.04,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 88%',
+              toggleActions: 'play none none reverse',
+            }
+          }
+        );
+      });
+
+      // ── E. Stat counters ────────────────────────────
+      document.querySelectorAll('.stat-counter').forEach(counterEl => {
+        const target = parseInt(counterEl.dataset.target, 10);
+        const obj    = { val: 0 };
+
+        gsap.to(obj, {
+          val: target,
+          duration: 2,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: counterEl,
+            start: 'top 85%',
+            once: true,
+          },
+          onUpdate: () => {
+            counterEl.textContent = Math.round(obj.val);
+          },
+        });
+      });
+
+      // ── F. Initial panel — show immediately ─────────
+      // Panel-hero starts visible at page load.
+      const heroPanel  = document.querySelector('#panel-hero');
+      heroPanel.style.opacity  = 0;
+      heroPanel.style.transform = 'translate(-50%, -50%) translateY(32px)';
+      gsap.to(heroPanel, {
+        opacity: 1,
+        transform: 'translate(-50%, -50%) translateY(0px)',
+        duration: 1.1,
+        ease: 'power3.out',
+        delay: 0.3,
+      });
+    }
+
+    /* ====================================================
+       UTILITY FUNCTIONS
+    ==================================================== */
+
+    /** Returns the correct CSS transform string for each panel,
+     *  preserving its base positioning. */
+    function getPanelTransform(selector, yOffset) {
+      switch (selector) {
+        case '#panel-hero':
+          return `translate(-50%, -50%) translateY(${yOffset}px)`;
+        case '#panel-cta':
+          return `translate(-50%, -50%) translateY(${yOffset}px)`;
+        case '#panel-detail':
+          return `translateY(calc(-50% + ${yOffset}px))`;
+        case '#panel-reliable':
+          return `translateY(calc(-50% + ${yOffset}px))`;
+        default:
+          return `translateY(${yOffset}px)`;
+      }
+    }
+
+    /** Cubic ease-out: slow at end */
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    /** Cubic ease-in: slow at start */
+    function easeInCubic(t) {
+      return t * t * t;
+    }
+
+    /* ====================================================
+       EVENT LISTENERS
+    ==================================================== */
+
+    // Resize: re-scale canvas and re-draw
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+
+    // Form submission (placeholder — connect to your backend)
+    document.getElementById('quote-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.textContent = 'Sending…';
+      btn.disabled    = true;
+      btn.style.opacity = '0.7';
+
+      // Simulate network delay; replace with your actual fetch() call
+      setTimeout(() => {
+        btn.textContent  = '✓ Request Sent! We\'ll be in touch soon.';
+        btn.style.background = 'linear-gradient(135deg,#15803d,#166534)';
+        btn.disabled         = false;
+        btn.style.opacity    = '1';
+      }, 1400);
+    });
+
+    /* ====================================================
+       BOOT SEQUENCE
+    ==================================================== */
+    // Initialize canvas dimensions before preloader builds frames
+    resizeCanvas();
+
+    // Start the preloader (builds frames + fires GSAP after)
+    runPreloader();
+
+  </script>
+</body>
+</html>
