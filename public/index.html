@@ -3,16 +3,1504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Eagle Lawn</title>
-    <link rel="stylesheet" href="style.css">
+    <title>The Eagle Lawn Services | Houston, TX</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --green: #3fd668;
+            --green-dark: #1a8a3a;
+            --bg: #060a06;
+            --bg2: #0d150d;
+            --text: #f0f5f0;
+            --muted: #8a9e8a;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 16px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(6,10,6,0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(63,214,104,0.1);
+            transition: border-color 0.3s;
+        }
+
+        nav img { height: 52px; }
+
+        nav .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        nav .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        nav .nav-links a:hover { color: var(--text); }
+
+        nav .cta-btn {
+            background: var(--green);
+            color: #000;
+            padding: 11px 26px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        nav .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 24px rgba(63,214,104,0.45);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.04);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .mobile-menu-toggle span {
+            width: 18px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 999px;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .mobile-menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .mobile-menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .mobile-menu {
+            position: fixed;
+            top: 84px;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            background: rgba(8,14,8,0.96);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(63,214,104,0.15);
+            padding: 18px 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transform: translateY(-14px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+
+        .mobile-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            padding: 12px 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .mobile-menu .mobile-cta {
+            margin-top: 8px;
+            border: none;
+            background: var(--green);
+            color: #031004;
+            text-align: center;
+            border-radius: 999px;
+            font-weight: 800;
+            padding: 13px 18px;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 140px 24px 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg-glow {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 70% 55% at 50% 38%, rgba(26,138,58,0.28) 0%, transparent 65%),
+                radial-gradient(ellipse 40% 30% at 20% 80%, rgba(63,214,104,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 30% at 80% 20%, rgba(63,214,104,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* Animated grid lines */
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(63,214,104,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(63,214,104,0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content { position: relative; z-index: 1; }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(63,214,104,0.1);
+            border: 1px solid rgba(63,214,104,0.28);
+            border-radius: 999px;
+            padding: 7px 18px;
+            font-size: 13px;
+            color: var(--green);
+            margin-bottom: 36px;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.2s forwards;
+            letter-spacing: 0.3px;
+        }
+
+        .hero h1 {
+            font-size: clamp(52px, 9vw, 104px);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -3px;
+            margin-bottom: 28px;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.4s forwards;
+        }
+
+        .hero h1 span { color: var(--green); }
+
+        .hero p {
+            font-size: clamp(16px, 2.2vw, 19px);
+            color: var(--muted);
+            max-width: 560px;
+            line-height: 1.65;
+            margin: 0 auto 52px;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.6s forwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            animation: fadeUp 0.9s 0.8s forwards;
+        }
+
+        .hero-trust {
+            margin-top: 28px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp 0.9s 1s forwards;
+        }
+
+        .hero-trust span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #d7e5d7;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.11);
+            border-radius: 999px;
+            padding: 7px 12px;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: #000;
+            padding: 17px 38px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 32px rgba(63,214,104,0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            padding: 17px 38px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.12);
+            transition: background 0.2s, border-color 0.2s;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.09);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            animation: fadeUp 1s 1.6s forwards;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .scroll-indicator .line {
+            width: 1px;
+            height: 48px;
+            background: linear-gradient(to bottom, transparent, var(--green), transparent);
+            animation: lineFlow 2.4s ease-in-out infinite;
+        }
+
+        /* ── STATS TICKER ── */
+        .stats-bar {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02);
+            padding: 40px 48px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .stat-item.visible { opacity: 1; transform: none; }
+
+        .stat-item .number {
+            font-size: 52px;
+            font-weight: 900;
+            color: var(--green);
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        .stat-item .label {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        /* ── SECTIONS ── */
+        section { padding: 110px 48px; }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--green);
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-label::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 1px;
+            background: var(--green);
+        }
+
+        .section-title {
+            font-size: clamp(34px, 5vw, 56px);
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+
+        .section-subtitle {
+            font-size: 17px;
+            color: var(--muted);
+            max-width: 520px;
+            line-height: 1.65;
+        }
+
+        /* ── SERVICES ── */
+        .services { background: var(--bg2); }
+
+        .services-inner { max-width: 1240px; margin: 0 auto; }
+
+        .services-header {
+            margin-bottom: 64px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s ease;
+        }
+
+        .services-header.visible { opacity: 1; transform: none; }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .service-card {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 20px;
+            padding: 36px 32px;
+            transition: border-color 0.3s, transform 0.3s, background 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            transform: translateY(40px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .service-card:hover::before { opacity: 1; }
+
+        .service-card.visible { opacity: 1; transform: none; }
+
+        .service-card:hover {
+            border-color: rgba(63,214,104,0.25);
+            background: rgba(63,214,104,0.04);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .service-icon {
+            font-size: 38px;
+            margin-bottom: 22px;
+            display: block;
+        }
+
+        .service-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+
+        .service-card p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        /* ── TESTIMONIALS ── */
+        .testimonials {
+            background: radial-gradient(circle at 15% 20%, rgba(63,214,104,0.08) 0%, transparent 45%), var(--bg);
+        }
+
+        .testimonials-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        .testimonials-header {
+            margin-bottom: 56px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .testimonial-card {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 30px;
+            transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(63,214,104,0.28);
+            background: rgba(63,214,104,0.045);
+        }
+
+        .testimonial-stars {
+            letter-spacing: 3px;
+            color: #8bffac;
+            font-size: 17px;
+            margin-bottom: 14px;
+        }
+
+        .testimonial-quote {
+            color: #cad8ca;
+            line-height: 1.65;
+            font-size: 15px;
+            margin-bottom: 22px;
+        }
+
+        .testimonial-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-pill {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(63,214,104,0.16);
+            border: 1px solid rgba(63,214,104,0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--green);
+            flex-shrink: 0;
+        }
+
+        .testimonial-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .testimonial-location {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* ── FAQ ── */
+        .faq {
+            background: var(--bg2);
+        }
+
+        .faq-inner {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .faq-list {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .faq-item {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .faq-trigger {
+            width: 100%;
+            background: none;
+            color: var(--text);
+            border: none;
+            text-align: left;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 20px 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }
+
+        .faq-icon {
+            font-size: 22px;
+            line-height: 1;
+            color: var(--green);
+            transition: transform 0.2s ease;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.32s ease;
+        }
+
+        .faq-content p {
+            padding: 0 22px 20px;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* ── REVEAL HELPERS ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.62s ease, transform 0.62s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* ── WHY US ── */
+        .why-us-inner {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 100px;
+            align-items: center;
+        }
+
+        .why-us-text {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: all 0.7s ease;
+        }
+
+        .why-us-text.visible { opacity: 1; transform: none; }
+
+        .why-us-list {
+            margin-top: 44px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .why-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .why-item.visible { opacity: 1; transform: none; }
+
+        .why-item .check {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(63,214,104,0.12);
+            border: 1px solid rgba(63,214,104,0.5);
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .why-item-text strong {
+            font-size: 16px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .why-item-text span {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .why-us-visual {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: all 0.7s ease 0.15s;
+        }
+
+        .why-us-visual.visible { opacity: 1; transform: none; }
+
+        .glow-card {
+            background: linear-gradient(145deg, rgba(26,138,58,0.15) 0%, rgba(6,10,6,0.5) 60%);
+            border: 1px solid rgba(63,214,104,0.2);
+            border-radius: 28px;
+            padding: 52px 44px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glow-card::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            right: -30%;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(63,214,104,0.12) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .stars {
+            font-size: 28px;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+        }
+
+        .glow-card .big-label {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .glow-card .sub-label {
+            font-size: 15px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .review-block {
+            margin-top: 40px;
+            padding-top: 36px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .review-block .quote {
+            font-size: 15px;
+            color: #c0d0c0;
+            font-style: italic;
+            line-height: 1.65;
+            margin-bottom: 16px;
+        }
+
+        .review-block .author {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        /* ── CTA ── */
+        .cta-section {
+            background: linear-gradient(160deg, #0a1a0a 0%, #060a06 100%);
+            text-align: center;
+        }
+
+        .cta-inner {
+            max-width: 720px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.7s ease;
+        }
+
+        .cta-inner.visible { opacity: 1; transform: none; }
+
+        .phone-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-size: clamp(28px, 5vw, 40px);
+            font-weight: 900;
+            color: var(--green);
+            text-decoration: none;
+            letter-spacing: -1.5px;
+            margin: 32px 0 48px;
+            transition: opacity 0.2s, transform 0.2s;
+        }
+
+        .phone-link:hover {
+            opacity: 0.85;
+            transform: scale(1.02);
+        }
+
+        /* ── FORM ── */
+        .contact-form {
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 28px;
+            padding: 48px;
+            text-align: left;
+        }
+
+        .contact-form h3 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .form-intro {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 18px;
+        }
+
+        .form-trust {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .form-trust span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #d4e4d4;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 999px;
+            padding: 6px 10px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 14px;
+            padding: 15px 18px;
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s, background 0.2s;
+            outline: none;
+            width: 100%;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: rgba(138,158,138,0.5); }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--green);
+            background: rgba(63,214,104,0.04);
+        }
+
+        .form-group select option { background: #0d150d; color: var(--text); }
+
+        .form-group textarea { resize: vertical; min-height: 110px; }
+
+        .form-submit {
+            width: 100%;
+            background: var(--green);
+            color: #000;
+            border: none;
+            border-radius: 999px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+            letter-spacing: -0.2px;
+        }
+
+        .form-submit:hover {
+            opacity: 0.92;
+            transform: scale(1.02);
+            box-shadow: 0 8px 28px rgba(63,214,104,0.4);
+        }
+
+        .form-note {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.55;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding: 40px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        footer img { height: 40px; }
+
+        footer p {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        footer .footer-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(63,214,104,0.35);
+            background: rgba(9,17,9,0.9);
+            color: var(--green);
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 120;
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+            transition: opacity 0.22s ease, transform 0.22s ease;
+        }
+
+        .scroll-to-top.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes lineFlow {
+            0% { opacity: 0; transform: scaleY(0) translateY(-100%); }
+            50% { opacity: 1; transform: scaleY(1) translateY(0); }
+            100% { opacity: 0; transform: scaleY(0) translateY(100%); }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .why-us-inner { grid-template-columns: 1fr; gap: 60px; }
+            .why-us-visual { transform: none; }
+            .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 14px 20px; }
+            nav .nav-links { display: none; }
+            nav .cta-btn { display: none; }
+            .mobile-menu-toggle { display: inline-flex; }
+            section { padding: 80px 24px; }
+            .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 36px 24px; }
+            .services-grid { grid-template-columns: 1fr; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .contact-form { padding: 32px 24px; }
+            .form-trust { gap: 8px; margin-bottom: 18px; }
+            footer { flex-direction: column; text-align: center; }
+            footer .footer-right { align-items: center; }
+            .reveal { transition-duration: 0.46s; transform: translateY(18px); }
+            .hero-trust { margin-top: 22px; }
+            .scroll-indicator { bottom: 24px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <img src="images/logo.png" alt="The Eagle Lawn Logo">
-        <h1>The Eagle Lawn</h1>
-    </header>
-    <main>
-        <p>Your beautiful lawn, our professional touch.</p>
-    </main>
+
+<!-- NAV -->
+<nav id="navbar">
+    <img src="images/logo.png" alt="The Eagle Lawn Services">
+    <ul class="nav-links">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#why-us">Why Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="tel:7139029347" class="cta-btn">📞 Free Estimate</a>
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#services">Services</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#faq">FAQ</a>
+    <a href="#why-us">Why Us</a>
+    <a href="#contact">Contact</a>
+    <a href="tel:7139029347" class="mobile-cta">📞 Free Estimate</a>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-bg-glow"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+        <div class="hero-badge">Houston's Trusted Lawn Care Team</div>
+        <h1>Your Lawn.<br><span>Transformed.</span></h1>
+        <p>Commercial-grade lawn care for Houston homeowners who want sharp edges, clean lines, and a yard that stays impressive week after week.</p>
+        <div class="hero-buttons">
+            <a href="#contact" class="btn-primary">Book My Free Estimate →</a>
+            <a href="tel:7139029347" class="btn-secondary">📞 (713) 902-9347</a>
+        </div>
+        <div class="hero-trust">
+            <span>Fast 24-48h Estimates</span>
+            <span>Licensed Local Crew</span>
+            <span>5-Star Houston Service</span>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <div class="line"></div>
+        Scroll
+    </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="number stat-value">500+</div>
+        <div class="label">Happy Clients</div>
+    </div>
+    <div class="stat-item">
+        <div class="number stat-value">10+</div>
+        <div class="label">Years Experience</div>
+    </div>
+    <div class="stat-item">
+        <div class="number stat-value">6</div>
+        <div class="label">Core Services</div>
+    </div>
+    <div class="stat-item">
+        <div class="number stat-value">100%</div>
+        <div class="label">Free Estimates</div>
+    </div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+    <div class="services-inner">
+        <div class="services-header">
+            <div class="section-label">What We Do</div>
+            <h2 class="section-title">Complete Lawn Care<br>Solutions</h2>
+            <p class="section-subtitle">From routine maintenance to full landscaping transformations — we handle it all for Houston homeowners.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <span class="service-icon">🌿</span>
+                <h3>Mowing & Edging</h3>
+                <p>Professional lawn mowing and precise edging for a perfectly manicured appearance that impresses every time.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">💧</span>
+                <h3>Drainage & Sprinkler Systems</h3>
+                <p>Expert installation and maintenance of irrigation systems to keep your lawn lush and healthy year-round.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🚿</span>
+                <h3>Pressure Washing</h3>
+                <p>Powerful cleaning for driveways, patios, and exterior surfaces — restoring them to like-new condition.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🌸</span>
+                <h3>Landscaping & Design</h3>
+                <p>Creative landscaping with mulch, flower beds, and ornamental plantings that dramatically boost curb appeal.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🌳</span>
+                <h3>Tree Service</h3>
+                <p>Professional tree care, trimming, and maintenance to keep your landscape safe, healthy, and beautiful.</p>
+            </div>
+            <div class="service-card">
+                <span class="service-icon">🏡</span>
+                <h3>Fencing & Cleanup</h3>
+                <p>Quality fence installation and comprehensive yard cleanup services for a pristine, well-defined property.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+    <div class="testimonials-inner">
+        <div class="testimonials-header">
+            <div class="section-label">Client Feedback</div>
+            <h2 class="section-title">Trusted Across<br>Greater Houston</h2>
+            <p class="section-subtitle">Homeowners keep referring Eagle Lawn because we show up on schedule, communicate clearly, and leave every property cleaner than we found it.</p>
+        </div>
+        <div class="testimonials-grid">
+            <article class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-quote">"Our front and backyard looked completely different in one afternoon. The lines were crisp, clean, and professional."</p>
+                <div class="testimonial-meta">
+                    <div class="avatar-pill">MR</div>
+                    <div>
+                        <div class="testimonial-name">Monica R.</div>
+                        <div class="testimonial-location">Memorial, Houston</div>
+                    </div>
+                </div>
+            </article>
+            <article class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-quote">"They fixed our drainage issue and now our yard finally survives heavy rain. Excellent communication and clean work."</p>
+                <div class="testimonial-meta">
+                    <div class="avatar-pill">DT</div>
+                    <div>
+                        <div class="testimonial-name">Daniel T.</div>
+                        <div class="testimonial-location">Spring Branch, Houston</div>
+                    </div>
+                </div>
+            </article>
+            <article class="testimonial-card">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-quote">"From weekly mowing to seasonal cleanup, they are always on time and always make the property look sharp."</p>
+                <div class="testimonial-meta">
+                    <div class="avatar-pill">AS</div>
+                    <div>
+                        <div class="testimonial-name">Angela S.</div>
+                        <div class="testimonial-location">The Heights, Houston</div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+    <div class="faq-inner">
+        <div class="section-label">Frequently Asked Questions</div>
+        <h2 class="section-title">Everything You Need<br>Before We Start</h2>
+        <p class="section-subtitle">Straight answers on timing, service scope, and what your first visit includes so you can book with confidence.</p>
+        <div class="faq-list">
+            <article class="faq-item">
+                <button class="faq-trigger" aria-expanded="false">
+                    How fast can you provide an estimate?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <p>Most estimates are scheduled within 24-48 hours. We provide clear pricing and scope before any work begins.</p>
+                </div>
+            </article>
+            <article class="faq-item">
+                <button class="faq-trigger" aria-expanded="false">
+                    Do I need to be home during service?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <p>No. As long as we have access to the yard, we can complete service and send progress photos and updates afterward.</p>
+                </div>
+            </article>
+            <article class="faq-item">
+                <button class="faq-trigger" aria-expanded="false">
+                    What services can be bundled together?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <p>Clients commonly bundle mowing, edging, cleanup, drainage checks, and seasonal landscaping for better long-term results.</p>
+                </div>
+            </article>
+            <article class="faq-item">
+                <button class="faq-trigger" aria-expanded="false">
+                    Are your methods safe for pets and children?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <p>Yes. We use responsible, eco-conscious practices and discuss any treatment details in advance when needed.</p>
+                </div>
+            </article>
+            <article class="faq-item">
+                <button class="faq-trigger" aria-expanded="false">
+                    Which areas around Houston do you serve?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-content">
+                    <p>We serve most neighborhoods across Greater Houston. Contact us and we can confirm your exact location immediately.</p>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-us" id="why-us">
+    <div class="why-us-inner">
+        <div class="why-us-text">
+            <div class="section-label">Why Eagle Lawn</div>
+            <h2 class="section-title">Professionals<br>You Can Trust</h2>
+            <p class="section-subtitle">We bring expertise, reliability, and genuine care to every single job — big or small.</p>
+            <div class="why-us-list">
+                <div class="why-item">
+                    <div class="check">✓</div>
+                    <div class="why-item-text">
+                        <strong>Deep Local Expertise</strong>
+                        <span>Skilled professionals with years of experience in Houston's unique landscape needs.</span>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="check">✓</div>
+                    <div class="why-item-text">
+                        <strong>Free Estimates Always</strong>
+                        <span>No commitment required — get a full transparent quote before we start any work.</span>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="check">✓</div>
+                    <div class="why-item-text">
+                        <strong>Eco-Conscious Practices</strong>
+                        <span>Environmentally responsible methods that are safe for your family, pets, and lawn.</span>
+                    </div>
+                </div>
+                <div class="why-item">
+                    <div class="check">✓</div>
+                    <div class="why-item-text">
+                        <strong>Flexible Scheduling</strong>
+                        <span>We work around your schedule to deliver top-quality service whenever you need it.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="why-us-visual">
+            <div class="glow-card">
+                <div class="stars">★★★★★</div>
+                <div class="big-label">5-Star Rated Service</div>
+                <div class="sub-label">Houston's trusted lawn care professionals, delivering outstanding results on every property.</div>
+                <div class="review-block">
+                    <div class="quote">"Eagle Lawn completely transformed our backyard. They were on time, professional, and the results were incredible. Our lawn has never looked better!"</div>
+                    <div class="author">— Houston Homeowner, Greater Heights</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA / CONTACT -->
+<section class="cta-section" id="contact">
+    <div class="cta-inner">
+        <div class="section-label" style="justify-content: center;">Get Started Today</div>
+        <h2 class="section-title">Ready to Transform<br>Your Outdoor Space?</h2>
+        <p class="section-subtitle" style="margin: 0 auto;">Contact us today for a free estimate. We serve the Greater Houston Area and are ready to make your lawn the best on the block.</p>
+        <div>
+            <a href="tel:7139029347" class="phone-link">📞 (713) 902-9347</a>
+        </div>
+        <div class="contact-form">
+            <h3>Request Your Free Estimate</h3>
+            <p class="form-intro">Tell us what you need and we will reply with pricing and availability, usually within one business day.</p>
+            <div class="form-trust">
+                <span>No obligation quote</span>
+                <span>Local Houston team</span>
+                <span>Fast response</span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" placeholder="John Smith" required>
+                </div>
+                <div class="form-group">
+                    <label>Best Phone Number *</label>
+                    <input type="tel" inputmode="tel" placeholder="(713) 000-0000" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email Address *</label>
+                <input type="email" placeholder="name@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Primary Service Needed *</label>
+                <select>
+                    <option value="">Choose your main service</option>
+                    <option>Mowing & Edging</option>
+                    <option>Drainage & Sprinkler Systems</option>
+                    <option>Pressure Washing</option>
+                    <option>Landscaping & Design</option>
+                    <option>Tree Service</option>
+                    <option>Fencing & Cleanup</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Preferred Contact Time</label>
+                <select>
+                    <option value="">Any time is fine</option>
+                    <option>Morning (8am - 12pm)</option>
+                    <option>Afternoon (12pm - 4pm)</option>
+                    <option>Evening (4pm - 7pm)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Project Details</label>
+                <textarea placeholder="Share your address area, property size, and what result you want to achieve..."></textarea>
+            </div>
+            <button class="form-submit">Send My Free Estimate Request →</button>
+            <p class="form-note">By submitting, you agree to be contacted by phone, text, or email about your estimate. We never sell your information.</p>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <img src="images/logo.png" alt="The Eagle Lawn Services">
+    <p>© 2025 The Eagle Lawn Services · Houston, TX</p>
+    <div class="footer-right">
+        <p><a href="tel:7139029347" style="color: var(--green); text-decoration: none; font-weight: 700;">(713) 902-9347</a></p>
+        <p style="font-size: 13px;">Greater Houston Area</p>
+    </div>
+</footer>
+
+<button class="scroll-to-top" id="scrollTopBtn" aria-label="Scroll to top">↑</button>
+
+<script>
+    // Mobile navigation
+    const mobileToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (mobileToggle && mobileMenu) {
+        mobileToggle.addEventListener('click', () => {
+            const isOpen = mobileMenu.classList.toggle('open');
+            mobileToggle.classList.toggle('active', isOpen);
+            mobileToggle.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                mobileToggle.classList.remove('active');
+                mobileToggle.setAttribute('aria-expanded', 'false');
+            });
+        });
+    }
+
+    // Add reveal classes and stagger delays from JS
+    const revealSelectors = [
+        '.service-card',
+        '.step',
+        '.pricing-card',
+        '.testimonial-card',
+        '.product-card',
+        '.review-card',
+        '.stat-item',
+        '.info-card',
+        '.services-header',
+        '.why-us-text',
+        '.why-us-visual',
+        '.why-item',
+        '.cta-inner',
+        '.faq-item'
+    ];
+
+    const revealTargets = document.querySelectorAll(revealSelectors.join(','));
+    revealTargets.forEach(el => {
+        el.classList.add('reveal');
+        if (!el.dataset.delay) {
+            const parent = el.parentElement;
+            const siblings = parent ? Array.from(parent.children).filter(node => node.classList.contains(el.classList[0])) : [];
+            const index = siblings.indexOf(el);
+            const column = index > -1 ? (index % 3) : 0;
+            el.dataset.delay = String(column * 80);
+        }
+    });
+
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const delay = Number(entry.target.dataset.delay || 0);
+            setTimeout(() => {
+                entry.target.classList.add('visible');
+            }, delay);
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.12 });
+
+    revealTargets.forEach(el => revealObserver.observe(el));
+
+    // Nav border + scroll-to-top visibility
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    const heroScroll = document.querySelector('.scroll-indicator');
+    window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        nav.style.borderBottomColor = window.scrollY > 60
+            ? 'rgba(63,214,104,0.18)' : 'rgba(63,214,104,0.10)';
+
+        if (scrollTopBtn) {
+            scrollTopBtn.classList.toggle('show', window.scrollY > 400);
+        }
+
+        if (heroScroll) {
+            heroScroll.style.opacity = window.scrollY > 40 ? '0' : '';
+        }
+    }, { passive: true });
+
+    if (scrollTopBtn) {
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // Animated counters using setInterval and 1400ms duration
+    function startCounter(el) {
+        if (!el || el.dataset.started === 'true') return;
+
+        const rawText = (el.dataset.original || el.textContent || '').trim();
+        const numericPart = (rawText.match(/\d+(?:\.\d+)?/) || ['0'])[0];
+        const target = parseFloat(numericPart);
+        const suffix = rawText.replace(numericPart, '');
+        const duration = 1400;
+        const tickRate = 16;
+        const steps = Math.max(1, Math.floor(duration / tickRate));
+        let step = 0;
+
+        el.dataset.started = 'true';
+        el.textContent = '0' + suffix;
+
+        const intervalId = setInterval(() => {
+            step += 1;
+            const progress = Math.min(step / steps, 1);
+            const current = Math.round(target * progress);
+            el.textContent = String(current) + suffix;
+
+            if (progress >= 1) {
+                clearInterval(intervalId);
+                el.textContent = String(Math.round(target)) + suffix;
+            }
+        }, tickRate);
+    }
+
+    document.querySelectorAll('.stat-value').forEach(el => {
+        el.dataset.original = el.textContent.trim();
+    });
+
+    const counterObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            startCounter(entry.target);
+            observer.unobserve(entry.target);
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-value').forEach(el => counterObserver.observe(el));
+
+    // FAQ accordion: one open at a time
+    const faqItems = Array.from(document.querySelectorAll('.faq-item'));
+    faqItems.forEach(item => {
+        const trigger = item.querySelector('.faq-trigger');
+        const content = item.querySelector('.faq-content');
+        if (!trigger || !content) return;
+
+        trigger.addEventListener('click', () => {
+            const isOpen = item.classList.contains('open');
+
+            faqItems.forEach(other => {
+                other.classList.remove('open');
+                const otherTrigger = other.querySelector('.faq-trigger');
+                const otherContent = other.querySelector('.faq-content');
+                if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+                if (otherContent) otherContent.style.maxHeight = '0px';
+            });
+
+            if (!isOpen) {
+                item.classList.add('open');
+                trigger.setAttribute('aria-expanded', 'true');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
