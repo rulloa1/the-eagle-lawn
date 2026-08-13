@@ -1,0 +1,12 @@
+# Runtime and deployment configuration
+.env*
+!.env.example
+
+# Hosting artifacts
+.vercel/
+
+# Common generated files
+node_modules/
+dist/
+__pycache__/
+*.py[cod]
